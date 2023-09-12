@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import RowText from '../components/RowText'
+import { weatherType } from '../components/utilities/weatherType'
 
-const currentWeather = () => {
+const CurrentWeather = () => {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
@@ -20,7 +21,7 @@ const currentWeather = () => {
       </View>
       <RowText
         messageOne={'Its sunny'}
-        messageTwo={'Its perfect t-shirt weather'}
+        messageTwo={weatherType['Thunderstorm'].message}
         containerStyles={styles.bodyWrapper}
         messageOneStyle={styles.description}
         messageTwoStyle={styles.message}
@@ -69,4 +70,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default currentWeather
+export default CurrentWeather
