@@ -5,63 +5,26 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Tabs from './src/components/Tabs'
 import * as Location from 'expo-location'
 import { WEATHER_API_KEY } from 'react-native-dotenv'
+import { useGetWeather } from './src/hooks/useGetWeather'
 
-//api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
 const App = () => {
-  const [loading, setLoading] = useState(true)
+  const [loading, error, weather] = useGetWeather()
+  console.log(loading, error, weather)
 
-  const [error, setError] = useState(null)
-  const [weather, setWeather] = useState([])
-  const [lat, setLat] = useState([])
-  const [lon, setLon] = useState([])
-
-  const fetchWeatherData = async () => {
-    try {
-      const res = await fetch(
-        `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY} `
-      )
-      const data = await res.json()
-      setWeather(data)
-    } catch (e) {
-      setError('Could not fetch weather')
-    } finally {
-      setLoading(false)
-      console.log(weather)
-    }
-  }
-  //Used to get location alert
-  useEffect(() => {
-    ;(async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync()
-      if (status !== 'granted') {
-        setError('permission to access location was denied')
-        return
-      }
-
-      let location = await Location.getCurrentPositionAsync({})
-
-      setLat(location.coords.latitude.toString())
-      setLon(location.coords.longitude)
-      if (lon && lat != null) {
-        await fetchWeatherData()
-      }
-    })()
-  }, [lat, lon])
-
-  //Icon for loading
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size={'large'} color={'blue'} />
-      </View>
-    )
-  } else {
+  if (weather && weather.list) {
     return (
       <NavigationContainer>
-        <Tabs />
+        <Tabs weather={weather} />
       </NavigationContainer>
     )
   }
+
+  //Icon for loading
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size={'large'} color={'blue'} />
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
